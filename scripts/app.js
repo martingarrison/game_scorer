@@ -1,16 +1,18 @@
 /* ── App Shell ── */
 const App = (() => {
-  const GAMES = [
-    { id: 'nertz',          name: 'Nertz',          icon: '🃏',  coming: true },
-    { id: 'spades',         name: 'Spades',         icon: '♠️',  coming: true },
-    { id: 'hearts',         name: 'Hearts',         icon: '♥️',  coming: true },
-    { id: 'wizard',         name: 'Wizard',         icon: '🧙',  coming: true },
-    { id: '42',             name: '42',             icon: '🎱',  coming: true },
-    { id: 'phase10',        name: 'Phase 10',       icon: '🔟',  coming: true },
-    { id: 'monopoly-deal',  name: 'Monopoly Deal',  icon: '🏠',  coming: true },
-    { id: 'skyjo',          name: 'SkyJo',          icon: '✈️',  coming: true },
-    { id: 'golf',           name: 'Golf',           icon: '⛳',  coming: true }
-  ];
+  /* Game modules register themselves here */
+  const GAMES = [];
+  const MODULES = {};
+
+  function registerGame(mod) {
+    GAMES.push({
+      id: mod.id,
+      name: mod.name,
+      icon: mod.icon,
+      coming: mod.coming !== false
+    });
+    MODULES[mod.id] = mod;
+  }
 
   let currentPage = 'home';
   let appEl;
@@ -81,12 +83,16 @@ const App = (() => {
     /* Bind game card clicks */
     page.querySelectorAll('.game-card').forEach(card => {
       card.addEventListener('click', () => {
-        const game = card.dataset.game;
+        const gameId = card.dataset.game;
         const coming = card.dataset.coming === 'true';
         if (coming) {
           showToast('Coming soon!');
         } else {
-          navigate('game/' + game);
+          const mod = MODULES[gameId];
+          if (mod && mod.launch) {
+            navigate('game/' + gameId);
+            mod.launch();
+          }
         }
       });
     });
@@ -166,7 +172,11 @@ const App = (() => {
     window.scrollTo(0, 0);
   }
 
-  return { init, navigateTo, showGameScreen, GAMES };
+  function goHome() {
+    navigate('home');
+  }
+
+  return { init, registerGame, navigateTo, showGameScreen, goHome };
 })();
 
 /* ── Boot ── */
