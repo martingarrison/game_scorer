@@ -125,7 +125,19 @@ body {
   cursor: not-allowed;
   transition: all 0.15s;
   position: relative;
-  opacity: 0.45;
+  opacity: 0.4;
+}
+
+.game-card[data-coming="false"] {
+  opacity: 1;
+  cursor: pointer;
+  border-color: rgba(223,160,76,0.2);
+}
+
+.game-card[data-coming="false"]:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(223,160,76,0.15);
 }
 
 .game-card .icon {
@@ -151,6 +163,11 @@ body {
   border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.game-card[data-coming="false"] .badge {
+  background: rgba(223,160,76,0.15);
+  color: var(--accent);
 }
 
 /* ── Players Page ── */
